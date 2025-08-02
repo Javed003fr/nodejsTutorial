@@ -1,32 +1,23 @@
-const http = require("http");
-const { readFile, readFileSync } = require("fs");
+const express = require("express");
+const app = express();
 
-//get all files
-const homePage = readFileSync("./2-express-tutorial/navbar-app/index.html");
+const people = require("./routes/people");
+const auth = require("./routes/auth");
 
-const server = http.createServer((req, res) => {
-  // console.log(req.method);
-  const url = req.url;
-  // home page
-  if (url === "/") {
-    res.writeHead(200, { "content-type": "text/html" });
-    res.write(homePage);
-    res.end();
-  }
-  // about page
-  else if (url === "/about") {
-    res.writeHead(200, { "content-type": "text/html" });
-    res.write("<h1>about page</h1>");
-    res.end();
-  }
-  // 404
-  else {
-    res.writeHead(404, { "content-type": "text/html" });
-    res.write("<h1>content not found!</h1>");
-    res.end();
-  }
+// static assets
+app.use(express.static("./data.js"));
+
+// parse form data
+app.use(express.urlencoded({ extended: false }));
+
+// parse json
+app.use(express.json());
+
+app.use("/api/people", people);
+app.use("/login", auth);
+
+app.listen(5000, () => {
+  console.log("Server is listening on port 5000...");
 });
 
-server.listen(5000);
-
-// next lesson will start from 009 HTTP - HTML FILE
+// next -> 028 METHODS - POST
